@@ -40,7 +40,7 @@
             margin-right: 10px;
         }
 
-        #delete-selected-button, #save-button {
+        #delete-selected-button {
             font-family: 'Courier New', monospace; /* Change the font */
             background-color: transparent;
             color: #e74c3c; /* Red color */
@@ -51,8 +51,8 @@
             margin-top: 15px;
         }
 
-        /* Style to make the buttons visually clickable */
-        #delete-selected-button:hover, #save-button:hover {
+        /* Style to make the button visually clickable */
+        #delete-selected-button:hover {
             color: #c0392b; /* Darker red on hover */
         }
 
@@ -68,6 +68,25 @@
             right: 10px;
         }
     </style>
+
+    <!-- Include Firebase scripts and configuration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+  apiKey: "AIzaSyDb8rg90rgfKg4Z6OVovy9whaxjrxeA2CU",
+  authDomain: "animelist-69df0.firebaseapp.com",
+  projectId: "animelist-69df0",
+  storageBucket: "animelist-69df0.appspot.com",
+  messagingSenderId: "989294668158",
+  appId: "1:989294668158:web:cf696c7d864620dd086b2f",
+  measurementId: "G-RYR3WQS8S8"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+    </script>
 </head>
 <body>
     <div id="sticky-note">
@@ -107,34 +126,7 @@
         document.getElementById('resolution-input').addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
-                var resolutionList = document.getElementById('resolution-list');
-                var resolutionInput = document.getElementById('resolution-input');
-
-                // Create a new list item
-                var newResolution = document.createElement('li');
-                newResolution.className = 'resolution-item';
-
-                // Create a checkbox
-                var checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'checkbox';
-
-                // Create a span for the resolution text
-                var resolutionText = document.createElement('span');
-                resolutionText.textContent = resolutionInput.value;
-
-                // Append the checkbox and resolution text to the list item
-                newResolution.appendChild(checkbox);
-                newResolution.appendChild(resolutionText);
-
-                // Append the new resolution to the list
-                resolutionList.appendChild(newResolution);
-
-                // Save updated content and checkbox states to local storage
-                saveContent();
-
-                // Clear the input for the next resolution
-                resolutionInput.value = '';
+                addAnime();
             }
         });
 
@@ -171,6 +163,38 @@
                 localStorage.setItem(checkboxId, isChecked);
             }
         }
+
+        function addAnime() {
+            var resolutionList = document.getElementById('resolution-list');
+            var resolutionInput = document.getElementById('resolution-input');
+
+            // Create a new list item
+            var newResolution = document.createElement('li');
+            newResolution.className = 'resolution-item';
+
+            // Create a checkbox
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'checkbox';
+
+            // Create a span for the resolution text
+            var resolutionText = document.createElement('span');
+            resolutionText.textContent = resolutionInput.value;
+
+            // Append the checkbox and resolution text to the list item
+            newResolution.appendChild(checkbox);
+            newResolution.appendChild(resolutionText);
+
+            // Append the new resolution to the list
+            resolutionList.appendChild(newResolution);
+
+            // Save updated content and checkbox states to local storage
+            saveContent();
+
+            // Clear the input for the next resolution
+            resolutionInput.value = '';
+        }
     </script>
 </body>
 </html>
+
