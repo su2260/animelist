@@ -70,10 +70,11 @@
     </style>
 
     <!-- Include Firebase scripts and configuration -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
-    <script>
-        const firebaseConfig = {
+   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
+
+<script>
+    const firebaseConfig = {
   apiKey: "AIzaSyDb8rg90rgfKg4Z6OVovy9whaxjrxeA2CU",
   authDomain: "animelist-69df0.firebaseapp.com",
   projectId: "animelist-69df0",
@@ -81,12 +82,86 @@
   messagingSenderId: "989294668158",
   appId: "1:989294668158:web:cf696c7d864620dd086b2f",
   measurementId: "G-RYR3WQS8S8"
-        };
+    };
 
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-    </script>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    function loadSavedContent() {
+        const resolutionList = document.getElementById('resolution-list');
+        const contentRef = database.ref('stickyNoteContent');
+
+        contentRef.on('value', (snapshot) => {
+            const savedContent = snapshot.val();
+            if (savedContent) {
+                resolutionList.innerHTML = savedContent;
+                restoreCheckboxState();
+            }
+        });
+    }
+
+    // Load saved content on page load
+    loadSavedContent();
+
+    document.getElementById('delete-selected-button').addEventListener('click', function () {
+        var checkboxes = document.getElementsByClassName('checkbox');
+
+        for (var i = checkboxes.length - 1; i >= 0; i--) {
+            if (checkboxes[i].checked) {
+                var resolutionItem = checkboxes[i].closest('.resolution-item');
+                resolutionItem.parentNode.removeChild(resolutionItem);
+            }
+        }
+
+        // Save updated content to Firebase
+        saveContent();
+    });
+
+    document.getElementById('resolution-input').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            var resolutionList = document.getElementById('resolution-list');
+            var resolutionInput = document.getElementById('resolution-input');
+
+            var newResolution = document.createElement('li');
+            newResolution.className = 'resolution-item';
+
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'checkbox';
+
+            var resolutionText = document.createElement('span');
+            resolutionText.textContent = resolutionInput.value;
+
+            newResolution.appendChild(checkbox);
+            newResolution.appendChild(resolutionText);
+
+            resolutionList.appendChild(newResolution);
+
+            // Save updated content to Firebase
+            saveContent();
+
+            resolutionInput.value = '';
+        }
+    });
+
+    function saveContent() {
+        var resolutionList = document.getElementById('resolution-list').innerHTML;
+        database.ref('stickyNoteContent').set(resolutionList);
+    }
+
+    function restoreCheckboxState() {
+        var checkboxes = document.getElementsByClassName('checkbox');
+        for (var i = 0; i < checkboxes.length; i++) {
+            var checkbox = checkboxes[i];
+            var checkboxId = checkbox.id;
+            var isChecked = checkbox.checked;
+            checkbox.checked = isChecked;
+        }
+    }
+</script>
+
 </head>
 <body>
     <div id="sticky-note">
