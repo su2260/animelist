@@ -156,36 +156,38 @@ function loadSavedContent() {
             }
         }
 
-        function addAnime() {
-            var resolutionList = document.getElementById('resolution-list');
-            var resolutionInput = document.getElementById('resolution-input');
+function addAnime() {
+    var resolutionList = document.getElementById('resolution-list');
+    var resolutionInput = document.getElementById('resolution-input');
 
-            // Create a new list item
-            var newResolution = document.createElement('li');
-            newResolution.className = 'resolution-item';
+    // Create a new list item
+    var newResolution = document.createElement('li');
+    newResolution.className = 'resolution-item';
 
-            // Create a checkbox
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'checkbox';
+    // Create a checkbox
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'checkbox';
+    checkbox.addEventListener('change', saveContent); // Add event listener for checkbox changes
 
-            // Create a span for the resolution text
-            var resolutionText = document.createElement('span');
-            resolutionText.textContent = resolutionInput.value;
+    // Create a span for the resolution text
+    var resolutionText = document.createElement('span');
+    resolutionText.textContent = resolutionInput.value;
 
-            // Append the checkbox and resolution text to the list item
-            newResolution.appendChild(checkbox);
-            newResolution.appendChild(resolutionText);
+    // Append the checkbox and resolution text to the list item
+    newResolution.appendChild(checkbox);
+    newResolution.appendChild(resolutionText);
 
-            // Append the new resolution to the list
-            resolutionList.appendChild(newResolution);
+    // Append the new resolution to the list
+    resolutionList.appendChild(newResolution);
 
-            // Save updated content to Firebase
-            saveContent();
+    // Save updated content to Firebase
+    saveContent();
 
-            // Clear the input for the next resolution
-            resolutionInput.value = '';
-        }
+    // Clear the input for the next resolution
+    resolutionInput.value = '';
+}
+
     </script>
 </head>
 
