@@ -88,43 +88,30 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        function loadSavedContent() {
-            const resolutionList = document.getElementById('resolution-list');
+function loadSavedContent() {
+    const resolutionList = document.getElementById('resolution-list');
+    const contentRef = db.collection('stickynote content').doc('rB6VspcL9nPy1UtCbs28');
 
-            // Reference to the 'stickynote content' document
-            const contentRef = db.collection('stickynote content').doc('rB6VspcL9nPy1UtCbs28');
+    contentRef.onSnapshot((doc) => {
+        resolutionList.innerHTML = ''; // Clear the list before appending new items
+        if (doc.exists) {
+            const data = doc.data();
+            const content = data.content;
 
-            // Fetch data from Firestore
-            contentRef.get().then((doc) => {
-                if (doc.exists) {
-                    const data = doc.data();
-                    const content = data.content;
-
-                    // Create a new list item
-                    const newResolution = document.createElement('li');
-                    newResolution.className = 'resolution-item';
-
-                    // Create a checkbox
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.className = 'checkbox';
-
-                    // Create a span for the resolution text
-                    const resolutionText = document.createElement('span');
-                    resolutionText.textContent = content;
-
-                    // Append the checkbox and resolution text to the list item
-                    newResolution.appendChild(checkbox);
-                    newResolution.appendChild(resolutionText);
-
-                    // Append the new resolution to the list
-                    resolutionList.appendChild(newResolution);
-
-                    // Restore checkbox state
-                    restoreCheckboxState();
-                }
+            const contentArray = content.split('</li>').filter(Boolean);
+            contentArray.forEach(item => {
+                const newResolution = document.createElement('li');
+                newResolution.innerHTML = item + '</li>';
+                const checkbox = newResolution.querySelector('.checkbox');
+                checkbox.addEventListener('change', saveContent);
+                resolutionList.appendChild(newResolution);
             });
+
+            restoreCheckboxState();
         }
+    });
+}
+
 
         // Load saved content on page load
         loadSavedContent();
