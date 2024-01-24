@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,158 +71,64 @@
     </style>
 
     <!-- Include Firebase scripts and configuration -->
-   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
-
-<script>
-    const firebaseConfig = {
-  apiKey: "AIzaSyDb8rg90rgfKg4Z6OVovy9whaxjrxeA2CU",
-  authDomain: "animelist-69df0.firebaseapp.com",
-  projectId: "animelist-69df0",
-  storageBucket: "animelist-69df0.appspot.com",
-  messagingSenderId: "989294668158",
-  appId: "1:989294668158:web:cf696c7d864620dd086b2f",
-  measurementId: "G-RYR3WQS8S8"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    function loadSavedContent() {
-        const resolutionList = document.getElementById('resolution-list');
-
-        // Reference to the 'stickyNoteContent' collection
-        const contentRef = db.collection('stickyNoteContent');
-
-        // Fetch data from Firestore
-        contentRef.get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const content = data.content;
-
-                // Create a new list item
-                const newResolution = document.createElement('li');
-                newResolution.className = 'resolution-item';
-
-                // Create a checkbox
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.className = 'checkbox';
-
-                // Create a span for the resolution text
-                const resolutionText = document.createElement('span');
-                resolutionText.textContent = content;
-
-                // Append the checkbox and resolution text to the list item
-                newResolution.appendChild(checkbox);
-                newResolution.appendChild(resolutionText);
-
-                // Append the new resolution to the list
-                resolutionList.appendChild(newResolution);
-            });
-
-            restoreCheckboxState();
-        });
-    }
-
-    // Load saved content on page load
-    loadSavedContent();
-
-    document.getElementById('delete-selected-button').addEventListener('click', function () {
-        var checkboxes = document.getElementsByClassName('checkbox');
-
-        for (var i = checkboxes.length - 1; i >= 0; i--) {
-            if (checkboxes[i].checked) {
-                var resolutionItem = checkboxes[i].closest('.resolution-item');
-                resolutionItem.parentNode.removeChild(resolutionItem);
-            }
-        }
-
-        // Save updated content to Firebase
-        saveContent();
-    });
-
-    document.getElementById('resolution-input').addEventListener('keydown', function (event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            addAnime();
-        }
-    });
-
-    function saveContent() {
-        var resolutionList = document.getElementById('resolution-list').innerHTML;
-
-        // Update the 'stickyNoteContent' document in Firestore
-        db.collection('stickyNoteContent').doc('content').set({
-            content: resolutionList
-        });
-    }
-
-    function restoreCheckboxState() {
-        var checkboxes = document.getElementsByClassName('checkbox');
-        for (var i = 0; i < checkboxes.length; i++) {
-            var checkbox = checkboxes[i];
-            var checkboxId = checkbox.id;
-            var isChecked = checkbox.checked;
-            checkbox.checked = isChecked;
-        }
-    }
-
-    function addAnime() {
-        var resolutionList = document.getElementById('resolution-list');
-        var resolutionInput = document.getElementById('resolution-input');
-
-        // Create a new list item
-        var newResolution = document.createElement('li');
-        newResolution.className = 'resolution-item';
-
-        // Create a checkbox
-        var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.className = 'checkbox';
-
-        // Create a span for the resolution text
-        var resolutionText = document.createElement('span');
-        resolutionText.textContent = resolutionInput.value;
-
-        // Append the checkbox and resolution text to the list item
-        newResolution.appendChild(checkbox);
-        newResolution.appendChild(resolutionText);
-
-        // Append the new resolution to the list
-        resolutionList.appendChild(newResolution);
-
-        // Save updated content to Firebase
-        saveContent();
-
-        // Clear the input for the next resolution
-        resolutionInput.value = '';
-    }
-</script>
-
-</head>
-<body>
-    <div id="sticky-note">
-        <p id="resolution-text">Young Su & Sara Anime List</p>
-        <ul id="resolution-list"></ul>
-        <textarea id="resolution-input" placeholder="Add anime"></textarea>
-        <button id="delete-selected-button">Delete Selected</button>
-    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
 
     <script>
-        // Function to load saved content from local storage
+        const firebaseConfig = {
+            apiKey: "AIzaSyDb8rg90rgfKg4Z6OVovy9whaxjrxeA2CU",
+            authDomain: "animelist-69df0.firebaseapp.com",
+            projectId: "animelist-69df0",
+            storageBucket: "animelist-69df0.appspot.com",
+            messagingSenderId: "989294668158",
+            appId: "1:989294668158:web:cf696c7d864620dd086b2f",
+            measurementId: "G-RYR3WQS8S8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         function loadSavedContent() {
-            var savedContent = localStorage.getItem('stickyNoteContent');
-            if (savedContent) {
-                document.getElementById('resolution-list').innerHTML = savedContent;
-                restoreCheckboxState();
-            }
+            const resolutionList = document.getElementById('resolution-list');
+
+            // Reference to the 'stickynote content' document
+            const contentRef = db.collection('stickynote content').doc('rB6VspcL9nPy1UtCbs28');
+
+            // Fetch data from Firestore
+            contentRef.get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    const content = data.content;
+
+                    // Create a new list item
+                    const newResolution = document.createElement('li');
+                    newResolution.className = 'resolution-item';
+
+                    // Create a checkbox
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'checkbox';
+
+                    // Create a span for the resolution text
+                    const resolutionText = document.createElement('span');
+                    resolutionText.textContent = content;
+
+                    // Append the checkbox and resolution text to the list item
+                    newResolution.appendChild(checkbox);
+                    newResolution.appendChild(resolutionText);
+
+                    // Append the new resolution to the list
+                    resolutionList.appendChild(newResolution);
+
+                    restoreCheckboxState();
+                }
+            });
         }
 
         // Load saved content on page load
         loadSavedContent();
 
-        document.getElementById('delete-selected-button').addEventListener('click', function() {
+        document.getElementById('delete-selected-button').addEventListener('click', function () {
             var checkboxes = document.getElementsByClassName('checkbox');
 
             for (var i = checkboxes.length - 1; i >= 0; i--) {
@@ -231,48 +138,33 @@
                 }
             }
 
-            // Save updated content and checkbox states to local storage
+            // Save updated content to Firebase
             saveContent();
         });
 
-        document.getElementById('resolution-input').addEventListener('keydown', function(event) {
+        document.getElementById('resolution-input').addEventListener('keydown', function (event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 addAnime();
             }
         });
 
-        // Function to save current content and checkbox states to local storage
         function saveContent() {
             var resolutionList = document.getElementById('resolution-list').innerHTML;
-            localStorage.setItem('stickyNoteContent', resolutionList);
-            saveCheckboxState();
+
+            // Update the 'stickynote content' document in Firestore
+            db.collection('stickynote content').doc('rB6VspcL9nPy1UtCbs28').set({
+                content: resolutionList
+            });
         }
 
-        // Function to restore checkbox states from local storage
         function restoreCheckboxState() {
             var checkboxes = document.getElementsByClassName('checkbox');
             for (var i = 0; i < checkboxes.length; i++) {
                 var checkbox = checkboxes[i];
                 var checkboxId = checkbox.id;
-                var isChecked = localStorage.getItem(checkboxId);
-
-                if (isChecked === 'true') {
-                    checkbox.checked = true;
-                    checkbox.closest('.resolution-item').classList.add('completed');
-                }
-            }
-        }
-
-        // Function to save checkbox states to local storage
-        function saveCheckboxState() {
-            var checkboxes = document.getElementsByClassName('checkbox');
-            for (var i = 0; i < checkboxes.length; i++) {
-                var checkbox = checkboxes[i];
-                var checkboxId = checkbox.id;
                 var isChecked = checkbox.checked;
-
-                localStorage.setItem(checkboxId, isChecked);
+                checkbox.checked = isChecked;
             }
         }
 
@@ -300,13 +192,24 @@
             // Append the new resolution to the list
             resolutionList.appendChild(newResolution);
 
-            // Save updated content and checkbox states to local storage
+            // Save updated content to Firebase
             saveContent();
 
             // Clear the input for the next resolution
             resolutionInput.value = '';
         }
     </script>
+
+</head>
+
+<body>
+    <div id="sticky-note">
+        <p id="resolution-text">Young Su & Sara Anime List</p>
+        <ul id="resolution-list"></ul>
+        <textarea id="resolution-input" placeholder="Add anime"></textarea>
+        <button id="delete-selected-button">Delete Selected</button>
+    </div>
 </body>
+
 </html>
 
