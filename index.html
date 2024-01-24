@@ -154,5 +154,62 @@
             var resolutionList = document.getElementById('resolution-list').innerHTML;
 
             // Update the 'stickynote content' document in Firestore
-            db.collection('stickynote content').doc('
+            db.collection('stickynote content').doc('rB6VspcL9nPy1UtCbs28').set({
+                content: resolutionList
+            });
+        }
+
+        function restoreCheckboxState() {
+            var checkboxes = document.getElementsByClassName('checkbox');
+            for (var i = 0; i < checkboxes.length; i++) {
+                var checkbox = checkboxes[i];
+                var checkboxId = checkbox.id;
+                var isChecked = checkbox.checked;
+                checkbox.checked = isChecked;
+            }
+        }
+
+        function addAnime() {
+            var resolutionList = document.getElementById('resolution-list');
+            var resolutionInput = document.getElementById('resolution-input');
+
+            // Create a new list item
+            var newResolution = document.createElement('li');
+            newResolution.className = 'resolution-item';
+
+            // Create a checkbox
+            var checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'checkbox';
+
+            // Create a span for the resolution text
+            var resolutionText = document.createElement('span');
+            resolutionText.textContent = resolutionInput.value;
+
+            // Append the checkbox and resolution text to the list item
+            newResolution.appendChild(checkbox);
+            newResolution.appendChild(resolutionText);
+
+            // Append the new resolution to the list
+            resolutionList.appendChild(newResolution);
+
+            // Save updated content to Firebase
+            saveContent();
+
+            // Clear the input for the next resolution
+            resolutionInput.value = '';
+        }
+    </script>
+</head>
+
+<body>
+    <div id="sticky-note">
+        <p id="resolution-text">Young Su & Sara Anime List</p>
+        <ul id="resolution-list"></ul>
+        <textarea id="resolution-input" placeholder="Add anime"></textarea>
+        <button id="delete-selected-button">Delete Selected</button>
+    </div>
+</body>
+
+</html>
 
