@@ -84,20 +84,43 @@
   measurementId: "G-RYR3WQS8S8"
     };
 
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    const db = firebase.firestore();
 
     function loadSavedContent() {
         const resolutionList = document.getElementById('resolution-list');
-        const contentRef = database.ref('stickyNoteContent');
 
-        contentRef.on('value', (snapshot) => {
-            const savedContent = snapshot.val();
-            if (savedContent) {
-                resolutionList.innerHTML = savedContent;
-                restoreCheckboxState();
-            }
+        // Reference to the 'stickyNoteContent' collection
+        const contentRef = db.collection('stickyNoteContent');
+
+        // Fetch data from Firestore
+        contentRef.get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const content = data.content;
+
+                // Create a new list item
+                const newResolution = document.createElement('li');
+                newResolution.className = 'resolution-item';
+
+                // Create a checkbox
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'checkbox';
+
+                // Create a span for the resolution text
+                const resolutionText = document.createElement('span');
+                resolutionText.textContent = content;
+
+                // Append the checkbox and resolution text to the list item
+                newResolution.appendChild(checkbox);
+                newResolution.appendChild(resolutionText);
+
+                // Append the new resolution to the list
+                resolutionList.appendChild(newResolution);
+            });
+
+            restoreCheckboxState();
         });
     }
 
@@ -121,34 +144,17 @@
     document.getElementById('resolution-input').addEventListener('keydown', function (event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            var resolutionList = document.getElementById('resolution-list');
-            var resolutionInput = document.getElementById('resolution-input');
-
-            var newResolution = document.createElement('li');
-            newResolution.className = 'resolution-item';
-
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.className = 'checkbox';
-
-            var resolutionText = document.createElement('span');
-            resolutionText.textContent = resolutionInput.value;
-
-            newResolution.appendChild(checkbox);
-            newResolution.appendChild(resolutionText);
-
-            resolutionList.appendChild(newResolution);
-
-            // Save updated content to Firebase
-            saveContent();
-
-            resolutionInput.value = '';
+            addAnime();
         }
     });
 
     function saveContent() {
         var resolutionList = document.getElementById('resolution-list').innerHTML;
-        database.ref('stickyNoteContent').set(resolutionList);
+
+        // Update the 'stickyNoteContent' document in Firestore
+        db.collection('stickyNoteContent').doc('content').set({
+            content: resolutionList
+        });
     }
 
     function restoreCheckboxState() {
@@ -159,6 +165,37 @@
             var isChecked = checkbox.checked;
             checkbox.checked = isChecked;
         }
+    }
+
+    function addAnime() {
+        var resolutionList = document.getElementById('resolution-list');
+        var resolutionInput = document.getElementById('resolution-input');
+
+        // Create a new list item
+        var newResolution = document.createElement('li');
+        newResolution.className = 'resolution-item';
+
+        // Create a checkbox
+        var checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'checkbox';
+
+        // Create a span for the resolution text
+        var resolutionText = document.createElement('span');
+        resolutionText.textContent = resolutionInput.value;
+
+        // Append the checkbox and resolution text to the list item
+        newResolution.appendChild(checkbox);
+        newResolution.appendChild(resolutionText);
+
+        // Append the new resolution to the list
+        resolutionList.appendChild(newResolution);
+
+        // Save updated content to Firebase
+        saveContent();
+
+        // Clear the input for the next resolution
+        resolutionInput.value = '';
     }
 </script>
 
